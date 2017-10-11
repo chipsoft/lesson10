@@ -35,11 +35,6 @@ static int changeData(void *data)
 		dataForChange.a++;
 		dataForChange.b++;
 		dataForChange.c++;
-		dataForChange.d++;
-		dataForChange.e++;
-		dataForChange.f++;
-		dataForChange.g++;
-		dataForChange.h++;
 		up_write(&mr_rwsem);
 		myDelay(i);
 	}
@@ -50,7 +45,7 @@ static int showData(void* data)
 {
 	down_read(&mr_rwsem);
 	printk(KERN_INFO "Enter\n");
-	printk(KERN_INFO "Data: a = %d, b = %d, c = %d, d = %d, e = %d, f = %d, g = %d, h = %d\n", dataForChange.a, dataForChange.b, dataForChange.c, dataForChange.d, dataForChange.e, dataForChange.f, dataForChange.g, dataForChange.h);
+	printk(KERN_INFO "Data: a = %d, b = %d, c = %d\n", dataForChange.a, dataForChange.b, dataForChange.c);
 	mdelay(5);
 	schedule();
 	up_read(&mr_rwsem);
@@ -63,9 +58,10 @@ static int __init hello_init(void)
 	printk(KERN_INFO "-> Module 10 load!\n");
 	init_rwsem(&mr_rwsem);
 	kthread_run(changeData, NULL, "changeData");
-	kthread_run(showData, NULL, "showData1");
-	kthread_run(showData, NULL, "showData2");
-	kthread_run(showData, NULL, "showData3");
+	u32 i;
+	for(i = 0; i < 100; ++i) {
+		kthread_run(showData, NULL, "showData1");
+	}
 	return 0;
 }
 
